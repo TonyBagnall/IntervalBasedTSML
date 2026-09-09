@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intervalbasedtsml"
+version = "0.1.0.dev0"
+description = "Estimators and reproducible experiments for the interval-based time series learning review"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = "BSD-3-Clause"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+  {name = "Anthony Bagnall"},
+  {name = "Alexander Banwell"},
+]
+dependencies = [
+  "aeon>=1.4,<1.6",
+  "tsml>=0.9,<1",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "scikit-learn>=1.4,<1.10",
+  "numba>=0.60",
+  "pandas>=2",
+  "statsmodels>=0.14",
+]
+
+[project.optional-dependencies]
+experiments = ["tsml-eval>=0.6,<0.7", "torch>=2"]
+dev = ["pytest>=8", "build>=1", "twine>=6", "ruff>=0.11"]
+
+[project.scripts]
+interval-benchmark = "intervalbasedtsml.experiments.benchmark:main"
+interval-league = "intervalbasedtsml.results:main"
+interval-simulate = "intervalbasedtsml.experiments.simulation:main"
+interval-forecast = "intervalbasedtsml.experiments.forecasting:main"
+interval-collate = "intervalbasedtsml.experiments.collate:main"
+
+[project.urls]
+Repository = "https://github.com/TonyBagnall/IntervalBasedTSML"
+Documentation = "https://github.com/TonyBagnall/IntervalBasedTSML/tree/main/docs"
+Issues = "https://github.com/TonyBagnall/IntervalBasedTSML/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

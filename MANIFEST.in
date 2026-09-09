@@ -1,0 +1,8 @@
+include README.md LICENSE NOTICE CITATION.cff
+recursive-include docs *.md *.json
+recursive-include configs *.json *.txt *.md
+recursive-include tests *.py
+recursive-include tools *.py
+prune results
+prune local
+prune data

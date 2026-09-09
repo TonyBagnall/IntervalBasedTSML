@@ -1,0 +1,47 @@
+{
+  "repository": "https://github.com/time-series-machine-learning/tsml-eval",
+  "branch": "ajb/simulator",
+  "commit": "2d224c0e784310daba7f5112845a24944aa1fbe2",
+  "files": [
+    {
+      "source": "tsml_eval/_wip/classification/_fit.py",
+      "destination": "src/intervalbasedtsml/classification/_fit.py",
+      "source_sha256": "c0abac22f1464cb7d096008c108cd5eca911de2db2a250f930cb6687def1ad45"
+    },
+    {
+      "source": "tsml_eval/_wip/classification/_pulsar.py",
+      "destination": "src/intervalbasedtsml/classification/_pulsar.py",
+      "source_sha256": "ee87b93e2cb8ac803478880eee191b60791eac5ba9a2abd305a4558b83578a21"
+    },
+    {
+      "source": "tsml_eval/_wip/regression/_pulsar_regressor.py",
+      "destination": "src/intervalbasedtsml/regression/_pulsar_regressor.py",
+      "source_sha256": "fbe1368fc473dfee1c286f1dfa9f0bc979f134c1faf76e1beec49d7a7758b685"
+    },
+    {
+      "source": "tsml_eval/_wip/simulation/_interval.py",
+      "destination": "src/intervalbasedtsml/simulation/_interval.py",
+      "source_sha256": "74930a06ed71d8b675e17324a29c30a2850d166afdc5fc7e33e755af89b83eb3"
+    },
+    {
+      "source": "tsml_eval/_wip/simulation/_protocol.py",
+      "destination": "src/intervalbasedtsml/simulation/_protocol.py",
+      "source_sha256": "688005fe993a706041bcd5b7e792ffc998f0fab9b03a726ac2ab898ac126bfcb"
+    },
+    {
+      "source": "tsml_eval/_wip/simulation/_diagnostics.py",
+      "destination": "src/intervalbasedtsml/simulation/_diagnostics.py",
+      "source_sha256": "a22c179094d6ee8441fcc98ca3cd28a599b62534f8a40be1e354193dfc72e19f"
+    },
+    {
+      "source": "tsml_eval/_wip/classification/tests/test_pulsar.py",
+      "destination": "tests/test_pulsar_upstream.py",
+      "source_sha256": "16066abe8e3aa19382c506eca8dbbd67d7b457e585cc2ff5e43c00557d91f7fc"
+    },
+    {
+      "source": "tsml_eval/_wip/simulation/tests/test_protocol.py",
+      "destination": "tests/test_protocol_upstream.py",
+      "source_sha256": "b839cf3cf52f5f00b6ff63338d9d0ea6f58894db9dfc565ac316cf941e59c67f"
+    }
+  ]
+}

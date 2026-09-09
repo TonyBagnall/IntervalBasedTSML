@@ -1,0 +1,16 @@
+.idea/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.nbc
+*.nbi
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+local/
+data/
+.coverage
+htmlcov/

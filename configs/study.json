@@ -1,0 +1,9 @@
+{
+  "status": "four benchmark mean-CSV collections deposited; raw predictions, historical metadata and ablation/simulation CSVs pending",
+  "univariate": {"datasets": 112, "resamples": 30, "primary_metric": "accuracy"},
+  "multivariate": {"datasets": 60, "resamples": [0], "primary_metric": "accuracy"},
+  "regression": {"datasets": 58, "resamples": 30, "primary_metric": "rmse"},
+  "forecasting": {"series": 100, "origins": 30, "window_length": 100, "primary_metric": "mse"},
+  "ablations": {"datasets": 103, "resamples": 30, "primary_metric": "accuracy"},
+  "simulation": {"length": 512, "interval_length": 64, "train_cases": 200, "test_cases": 500, "replicates": 30, "strengths": [0.75, 1.0], "seed_base": 0, "seed_status": "new-run default, historical value unconfirmed"}
+}

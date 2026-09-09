@@ -1,0 +1,6 @@
+This distribution includes code from tsml-eval, copyright The Time Series Machine Learning (tsml) developers, under the BSD 3-Clause License reproduced in LICENSE.
+
+Source: https://github.com/time-series-machine-learning/tsml-eval
+Branch: ajb/simulator
+Commit: 2d224c0e784310daba7f5112845a24944aa1fbe2
+Imported 2026-09-09. Import paths were relocated to intervalbasedtsml; algorithm implementations were retained. See docs/provenance.json for source hashes.
