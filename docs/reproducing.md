@@ -42,7 +42,7 @@ sidecar; prediction files use the standard tsml-eval format. Default output is
 ```bash
 interval-simulate --dry-run
 interval-simulate --estimators quant --strengths 1 --placements aligned --replicates 1
-interval-simulate --estimators pulsar pulsar-nopool pulsar-nosel pulsar-noar pulsar-et pulsar-ridge tsf rocket --strengths 1 --placements aligned uniform --replicates 5
+interval-simulate --estimators pulsar pulsar-nopool pulsar-nosel pulsar-noar pulsar-et pulsar-ridge tsf rocket --strengths 1 --placements aligned uniform --replicates 30
 ```
 
 The default main study uses 512 timepoints, one length-64 variance burst,
@@ -70,12 +70,12 @@ The runner supports DrCIF, QUANT, their differenced-response versions, Ridge and
 Naive. It refits on expanding histories at each of the final 30 consecutive
 observations, uses 99 predictor values and one target per 100-value window,
 and restores differenced predictions to levels. It never trains on future
-observations. The draft does not identify exact origins, so the final-origin
+observations. The manuscript does not identify exact origins, so the final-origin
 policy is explicit and must be reconciled with the original run manifest.
 
 The 100 series IDs are recorded in `configs/datasets/tsfr100.txt`. Source download
 mapping, truncation offsets, final origins, and configurations
-for AutoETS, AutoARIMA, SCUM, TimeCNN/d-TimeCNN and NBeats have not yet been
+for AutoETS, AutoARIMA, SCUM, TimeCNN/d-TimeCNN and N-BEATS have not yet been
 recovered. Their deposited mean results are displayed, but a new implementation with
 guessed defaults is not labelled as their reproduction. The same applies to the
 multivariate LITETime-MV and PatchMTSC reference configurations.
@@ -105,7 +105,7 @@ Tables rank methods **within datasets**, average the ranks and count wins
 including ties. Missing scores, duplicate dataset IDs and non-finite values fail
 validation; no silent intersection changes the population. Optional pairwise
 tests are two-sided Wilcoxon with Holm correction over all pairs, following the
-paper's general protocol. The draft has conflicting one-sided wording in its
+paper's general protocol. The manuscript has conflicting one-sided wording in its
 univariate section; resolve this before regenerating its significance claims.
 Its component ablations explicitly report uncorrected tests instead.
 
@@ -123,5 +123,8 @@ still requests final aeon/tsml-eval commits. Record those separately from this
 package's tested environment and imported source commit. The common 60/58 lists
 come directly from the CSVs. Confirm the UCR103 list, per-resample coverage,
 resource units, deep/statistical reference configurations, simulation seeds and
-forecasting origins before declaring an exact reproduction. sMAPE and
-ablation/simulation CSVs remain absent.
+forecasting origins before declaring an exact reproduction. The repository
+includes manuscript-summary CSVs for the forecasting ranks and both simulation
+tables, but raw ablation/simulation replicates and raw sMAPE source files remain
+absent. Exact historical run manifests, per-resample predictions and
+forecasting origins/configurations are also unavailable.

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "Please cite this companion software and the paper when available, alongside aeon and Multiverse."
-title: "IntervalBasedTSML: companion software for the interval-based time series learning review"
+title: "From TSF to PULSAR: A Review and Bake Off for Interval-Based Time Series Machine Learning"
 type: software
 version: 0.1.0.dev0
 repository-code: "https://github.com/TonyBagnall/IntervalBasedTSML"
@@ -10,4 +10,4 @@ authors:
   - family-names: Banwell
     given-names: Alexander
 license: BSD-3-Clause
-abstract: "Work-in-progress estimators, experiments and league tables accompanying Interval-Based Time Series Classification: A Historical, Design and Empirical Review."
+abstract: "Estimators, experiment runners, benchmark results and league tables accompanying From TSF to PULSAR: A Review and Bake Off for Interval-Based Time Series Machine Learning."

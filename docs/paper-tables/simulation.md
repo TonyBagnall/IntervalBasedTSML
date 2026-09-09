@@ -1,6 +1,6 @@
 # Alignment simulation
 
-30 independent paired replicates per condition. Accuracy is reported separately for each strength and placement; Global is a non-localising whole-series reference, not a competitor or lower bound.
+30 independent paired replicates per condition. Accuracy is reported separately for each strength and placement; Global is a non-localising whole-series reference, not a competitor.
 
 Manuscript summary transcribed from table `sim_alignment` on 2026-09-09. This reference copy is separate from the result-derived tables.
 

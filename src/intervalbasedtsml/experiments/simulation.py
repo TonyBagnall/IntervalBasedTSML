@@ -29,7 +29,7 @@ def main(argv=None):
     """Write predictions and a separate whole-series diagnostic for each replicate."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-path", type=Path, default=Path("local/simulation"))
-    parser.add_argument("--estimators", nargs="+", default=["quant", "tsf", "rstsf", "pulsar", "rocket", "rdst"])
+    parser.add_argument("--estimators", nargs="+", default=["quant", "tsf", "rstsf", "pulsar", "rocket"])
     parser.add_argument("--strengths", nargs="+", type=float, default=[0.75, 1.0])
     parser.add_argument("--placements", nargs="+", choices=["aligned", "quarter", "full", "uniform"],
                         default=["aligned", "quarter", "full", "uniform"])

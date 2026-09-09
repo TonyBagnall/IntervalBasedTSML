@@ -1,4 +1,4 @@
-"""Refresh draft summary tables from the author's LaTeX manuscript (no CSV import)."""
+"""Refresh manuscript summary tables from the author's LaTeX source (no CSV import)."""
 
 import argparse
 import hashlib
@@ -23,10 +23,10 @@ SPECS = [
      "103 UCR datasets; 30 resamples. Ordered by mean accuracy. Comparisons against QUANT use uncorrected p-values.",
      ["Variant", "Element removed", "Accuracy", "Delta QUANT", "W-L-T", "p (uncorrected)"]),
     ("sim_alignment", "simulation", "Alignment simulation",
-     "30 independent paired replicates per condition. Accuracy is reported separately for each strength and placement; the Floor column is a global-summary diagnostic, not a competitor.",
-     ["Strength", "Placement", "QUANT", "TSF", "r-STSF", "PULSAR", "ROCKET", "RDST", "Floor"]),
+     "30 independent paired replicates per condition. Accuracy is reported separately for each strength and placement; Global is a non-localising whole-series reference, not a competitor.",
+     ["Strength", "Placement", "QUANT", "TSF", "r-STSF", "PULSAR", "ROCKET", "Global"]),
     ("sim_ablation", "simulation-ablation", "Simulation ablation",
-     "Strength 1; five paired replicates. Accuracy and loss of accuracy on displacement; standard errors in parentheses. The paper reports conditions rather than an overall league ranking.",
+     "Strength 1; 30 paired replicates. Accuracy and loss of accuracy on displacement; standard errors in parentheses. The paper reports conditions rather than an overall league ranking.",
      ["Variant", "Element removed", "Aligned", "Uniform", "Loss"]),
 ]
 
@@ -35,7 +35,8 @@ def clean(value):
     """Convert the small set of LaTeX constructs in the summary tables."""
     value = value.strip().replace(r"$^\dagger$", "*").replace(r"$^\ddagger$", "**")
     return (value.replace(r"\times", " x ").replace("$", "")
-            .replace("{", "").replace("}", "").replace("---", "--"))
+            .replace("{", "").replace("}", "").replace("---", "--")
+            .replace("NBeats", "N-BEATS"))
 
 
 def main():
@@ -62,26 +63,29 @@ def main():
         table += "".join("| " + " | ".join(row) + " |\n" for row in rows)
         notes = "\nLower mean rank and error are better; higher accuracy, AUROC and R-squared are better.\n"
         if slug in ("univariate", "multivariate"):
-            notes += "\n\\* The draft reports hard 0/1 MR-Hydra outputs; its AUROC and log loss are not directly comparable with probability-producing methods.\n"
+            notes += "\n\\* The manuscript reports hard 0/1 MR-Hydra outputs; its AUROC and log loss are not directly comparable with probability-producing methods.\n"
         if slug == "multivariate":
-            notes += "\n\\*\\* GPU timings are omitted in the draft because they are not comparable with CPU timings.\n"
+            notes += "\n\\*\\* GPU timings are omitted in the manuscript because they are not comparable with CPU timings.\n"
         if slug == "regression":
             notes += "\nPULSAR's extreme errors on a few datasets dominate its mean RMSE and R-squared. Its middling rank does not imply reliable regression performance.\n"
         if slug == "forecasting":
             notes += "\nThe d- prefix means prediction of the next change, added to the last observed level. No significance claim follows from the rank order alone.\n"
+        if slug == "simulation":
+            notes = "\nGlobal is a non-localising whole-series summary reference, not a competitor or lower bound.\n"
+        if slug == "simulation-ablation":
+            notes = "\nValues are mean accuracy (standard error); loss is the reduction from aligned to uniform placement.\n"
         content = f"# {title}\n\n{description}\n\n"
-        content += (f"Draft snapshot transcribed from manuscript table `{label}` on {args.date}. "
-                    "These values have not yet been reconciled with the cleaned CSV archive. "
-                    "Displayed ranks are rounded; apparent ties are not broken using rounded means.\n\n")
+        content += (f"Manuscript summary transcribed from table `{label}` on {args.date}. "
+                    "This reference copy is separate from the result-derived tables.\n\n")
         content += table + notes + "\n[Results archive](../../results/README.md) | [Reproduction](../reproducing.md)\n"
         (destination / f"{slug}.md").write_text(content, encoding="utf-8", newline="\n")
         if not slug.startswith("simulation"):
             blocks.append(f"### {title}\n\n{description}\n\n" + table + notes)
     (destination / "paper-snapshot.json").write_text(json.dumps({
-        "title": "Interval-Based Time Series Classification: A Historical, Design and Empirical Review",
+        "title": "From TSF to PULSAR: A Review and Bake Off for Interval-Based Time Series Machine Learning",
         "source": args.manuscript.name, "snapshot_date": args.date,
         "sha256": hashlib.sha256(raw).hexdigest(),
-        "status": "work in progress; CSV reconciliation pending",
+        "status": "submitted manuscript snapshot",
     }, indent=2) + "\n", encoding="utf-8")
 
 

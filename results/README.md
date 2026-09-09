@@ -22,18 +22,18 @@ unavailable data.
 The manuscript specifies 30 resamples for UCR/TSER, the original partition for
 Multiverse, and 30 rolling origins for forecasting. Mean files cannot verify
 these counts. Raw predictions, per-resample/origin records and historical
-software commits are not included. Ablation and simulation CSVs are absent;
-those displayed tables remain manuscript snapshots.
+  software commits are not included. The two simulation CSVs and the forecasting
+  rank CSV are explicitly manuscript summaries; raw per-replicate simulation
+  outputs and forecasting predictions are absent.
 
 ## Measurements and availability
 
 - UCR fit time and memory are `-1` for CIF, DrCIF, RISE, STSF and TSF. Their
-  cells are marked unavailable, without substituting draft numbers.
+  cells are marked unavailable, without substituting manuscript numbers.
 - Timing is interpreted as milliseconds and memory as bytes from tsml-eval
   conventions and agreement with the manuscript scale. Mean CSVs have no unit
   metadata, so original run headers are needed to confirm this interpretation.
-  Tables use seconds and MiB consistently; draft memory conversions varied
-  across collections.
+  Tables use seconds and MB consistently, matching the submitted manuscript.
 - Multivariate GPU timings remain in the CSVs but are omitted from the CPU
   comparison, following the paper.
 - Forecasting contains MAPE but no sMAPE. sMAPE cannot be recovered from these

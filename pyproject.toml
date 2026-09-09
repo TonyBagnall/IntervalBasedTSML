@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "intervalbasedtsml"
 version = "0.1.0.dev0"
-description = "Estimators and reproducible experiments for the interval-based time series learning review"
+description = "Code, estimators and benchmark results for From TSF to PULSAR"
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
 license = "BSD-3-Clause"

@@ -2,8 +2,7 @@
 
 103 UCR datasets; 30 resamples. Ordered by mean accuracy. Comparisons against QUANT use uncorrected p-values.
 
-Manuscript summary values from the submitted paper. This reference copy is
-separate from the result-derived benchmark tables.
+Manuscript summary transcribed from table `pulsar_ablation` on 2026-09-09. This reference copy is separate from the result-derived tables.
 
 | Variant | Element removed | Accuracy | Delta QUANT | W-L-T | p (uncorrected) |
 | --- | --- | --- | --- | --- | --- |
@@ -16,7 +15,6 @@ separate from the result-derived benchmark tables.
 | ridge-head | the extra-trees head | 0.8604 | -0.0036 | 45--55--3 | 0.57 |
 | DrCIF | -- | 0.8595 | -- | -- | -- |
 
-Values are mean accuracy; win/loss/tie counts and uncorrected p-values are
-retained from the submitted manuscript.
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
 
 [Results archive](../../results/README.md) | [Reproduction](../reproducing.md)

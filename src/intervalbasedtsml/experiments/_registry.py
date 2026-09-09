@@ -72,12 +72,11 @@ def make_estimator(name, task="classification", *, random_state=0, n_jobs=1, **o
             from sklearn.ensemble import RandomForestRegressor
             params.update(features=SevenNumberSummary(),
                           estimator=RandomForestRegressor(n_estimators=500))
-    elif task == "classification" and name in ("hc2", "mrhydra", "rocket", "rdst"):
+    elif task == "classification" and name in ("hc2", "mrhydra", "rocket"):
         module, class_name = {
             "hc2": ("hybrid", "HIVECOTEV2"),
             "mrhydra": ("convolution_based", "MultiRocketHydraClassifier"),
             "rocket": ("convolution_based", "RocketClassifier"),
-            "rdst": ("shapelet_based", "RDSTClassifier"),
         }[name]
         cls = getattr(import_module(f"aeon.classification.{module}"), class_name)
         if name == "mrhydra":

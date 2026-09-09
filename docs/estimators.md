@@ -6,7 +6,7 @@ The public imports accept aeon's `(cases, channels, timepoints)` collection form
 | --- | --- | --- |
 | `PULSARClassifier` | `intervalbasedtsml.classification` | Main comparison and parameterised ablations |
 | `FITClassifier` | `intervalbasedtsml.classification` | Historical review; not in the main league tables |
-| `PULSARRegressor` | `intervalbasedtsml.regression` | TSER comparison; draft reports extreme errors on some problems |
+| `PULSARRegressor` | `intervalbasedtsml.regression` | TSER comparison; the manuscript reports extreme errors on some problems |
 | TSF, RISE, STSF, CIF, DrCIF, r-STSF, QUANT | `aeon.classification.interval_based` | Established classifiers |
 | TSF, RISE, CIF, DrCIF, QUANT, RandomIntervalRegressor | `aeon.regression.interval_based` | Established regressors |
 

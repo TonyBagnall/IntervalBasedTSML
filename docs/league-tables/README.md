@@ -2,7 +2,7 @@
 
 The four benchmark tables are recalculated from deposited per-dataset mean CSVs.
 Their full-precision ranks determine the ordering. Ablation and simulation
-tables remain manuscript snapshots, pending their CSVs.
+tables are manuscript summaries with labelled CSVs; raw simulation replicates are not included.
 
 | Comparison | Coverage | Primary ordering |
 | --- | --- | --- |
@@ -12,7 +12,7 @@ tables remain manuscript snapshots, pending their CSVs.
 | [Forecasting](forecasting.md) | 100 series, 30 rolling origins | Mean MSE rank |
 | [Ablations](ablations.md) | 103 UCR datasets, 30 resamples | Mean accuracy |
 | [Alignment simulation](simulation.md) | 30 paired population replicates per condition | Accuracy by strength and placement |
-| [Simulation ablation](simulation-ablation.md) | 5 paired replicates, strength 1 | Aligned/uniform accuracy and displacement loss |
+| [Simulation ablation](simulation-ablation.md) | 30 paired replicates, strength 1 | Aligned/uniform accuracy and displacement loss |
 
 The [Multiverse repository](https://github.com/aeon-toolkit/multiverse) has its
 own benchmark populations and league table; its results should not be substituted

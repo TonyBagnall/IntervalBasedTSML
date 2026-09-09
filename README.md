@@ -1,8 +1,10 @@
 # IntervalBasedTSML
 
-Code and results for **Interval-Based Time Series Classification: A Historical,
-Design and Empirical Review**, by Anthony Bagnall and Alexander Banwell.
-The paper and this repository are works in progress.
+Code and results for **From TSF to PULSAR: A Review and Bake Off for
+Interval-Based Time Series Machine Learning**, by Anthony Bagnall and Alexander
+Banwell. The repository covers univariate and multivariate classification,
+time-series extrinsic regression (TSER), forecasting-based regression, the
+PULSAR component ablation and a controlled simulation study.
 
 Built on **[aeon](https://www.aeon-toolkit.org/)**, the time series machine
 learning toolkit, with **[tsml](https://github.com/time-series-machine-learning/tsml-py)**
@@ -18,105 +20,174 @@ or data, alongside this study.
 
 ## Paper results
 
-The four benchmark league tables below are generated from the 40 deposited CSVs in [results/](results/README.md). The archive covers 112 UCR, 60 Multiverse, 58 TSER and 100 forecasting datasets. Each table uses its own matched population.
+The benchmark league tables below reproduce the submitted manuscript tables. The repository also contains the deposited per-dataset mean CSVs for 112 UCR, 60 Multiverse, 58 TSER and 100 forecasting datasets. Each comparison uses its own matched population.
 
-[PULSAR ablations](docs/league-tables/ablations.md), [alignment simulations](docs/league-tables/simulation.md) and [simulation ablations](docs/league-tables/simulation-ablation.md) remain manuscript snapshots; their CSVs have not been deposited.
+# Univariate classification
 
-### Univariate classification
+112 UCR datasets; 30 resamples. Ordered by mean accuracy rank.
 
-112 datasets; 10 estimators. 30 resamples, according to the manuscript. Scores come from the deposited per-dataset means; the underlying resamples/origins are not included.
+Manuscript summary transcribed from table `rq1` on 2026-09-09. This reference copy is separate from the result-derived tables.
 
-| Estimator | Mean rank | Wins (including ties) | Accuracy | Balanced accuracy | AUROC | Log loss | Fit (s) | Predict (s) | Memory (MiB) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HC2 | 2.9464 | 43 | 0.8906 | 0.8697 | 0.9678 | 0.3655 | 1236.0 | 965.8 | 716.7 |
-| MR-Hydra | 3.3393 | 44 | 0.8840 | 0.8658 | 0.9132 | 4.1819 | 17.4 | 26.1 | 770.8 |
-| PULSAR | 3.4821 | 18 | 0.8797 | 0.8590 | 0.9644 | 0.5233 | 33.8 | 36.4 | 357.7 |
-| QUANT | 4.5045 | 9 | 0.8670 | 0.8450 | 0.9617 | 0.4959 | 3.9 | 0.6 | 20.7 |
-| DrCIF | 5.0402 | 5 | 0.8627 | 0.8400 | 0.9609 | 0.5108 | unavailable | 195.5 | unavailable |
-| r-STSF | 5.2143 | 12 | 0.8598 | 0.8375 | 0.9603 | 0.5147 | 10.4 | 3.6 | 105.0 |
-| CIF | 6.0312 | 6 | 0.8542 | 0.8318 | 0.9563 | 0.5280 | unavailable | 204.4 | unavailable |
-| STSF | 7.3214 | 7 | 0.8415 | 0.8204 | 0.9541 | 0.5504 | unavailable | 7.6 | unavailable |
-| RISE | 8.5580 | 4 | 0.8022 | 0.7725 | 0.9357 | 0.7849 | unavailable | 14.6 | unavailable |
-| TSF | 8.5625 | 4 | 0.8075 | 0.7859 | 0.9311 | 0.6359 | unavailable | 3.8 | unavailable |
-
-Ranks are computed within each dataset, with average ranks for ties, then averaged across datasets. Wins include ties. Rank order alone does not establish statistical significance.
-
-MR-Hydra AUROC and log loss are not directly comparable with probability-producing methods: the manuscript describes hard 0/1 outputs.
-
-Fit time and memory are unavailable (-1 in the source) for CIF, DrCIF, RISE, STSF and TSF. Prediction times are taken from these CSVs and differ from some draft values.
-
-Time is displayed in seconds (source / 1,000), memory in MiB (source / 1,048,576). Source units are inferred from tsml-eval conventions and manuscript scale, since mean CSVs have no unit metadata.
-
-### Multivariate classification
-
-60 datasets; 12 estimators. Original partition, according to the manuscript. Scores come from the deposited per-dataset means; the underlying resamples/origins are not included.
-
-| Estimator | Mean rank | Wins (including ties) | Accuracy | Balanced accuracy | AUROC | Log loss | Fit (s) | Predict (s) | Memory (MiB) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| HC2 | 4.5500 | 21 | 0.7828 | 0.7416 | 0.8833 | 0.5449 | 29474.3 | 4890.2 | 6596.5 |
-| MR-Hydra | 5.1417 | 15 | 0.7748 | 0.7446 | 0.7980 | 8.1164 | 191.2 | 45.8 | 6415.3 |
-| PULSAR | 5.5083 | 6 | 0.7717 | 0.7385 | 0.8583 | 0.6135 | 358.8 | 55.3 | 1671.7 |
-| r-STSF | 6.0500 | 6 | 0.7669 | 0.7329 | 0.8605 | 0.6311 | 1856.2 | 31.0 | 7803.3 |
-| DrCIF | 6.1583 | 4 | 0.7655 | 0.7316 | 0.8656 | 0.6483 | 1854.6 | 894.0 | 350.2 |
-| CIF | 6.1750 | 7 | 0.7670 | 0.7343 | 0.8728 | 0.6500 | 2132.1 | 1153.5 | 280.1 |
-| QUANT | 6.3333 | 5 | 0.7571 | 0.7266 | 0.8589 | 0.7372 | 215.8 | 6.4 | 613.9 |
-| STSF | 6.5083 | 7 | 0.7650 | 0.7387 | 0.8625 | 0.6796 | 9124.8 | 76.4 | 596.2 |
-| LITETime-MV | 6.6000 | 15 | 0.7364 | 0.7130 | 0.8374 | 1.3438 | GPU: omitted | GPU: omitted | 1465.4 |
-| PatchMTSC | 7.4917 | 5 | 0.7298 | 0.6748 | 0.8090 | 0.7960 | GPU: omitted | GPU: omitted | 1089.0 |
-| TSF | 7.9917 | 6 | 0.7345 | 0.7041 | 0.8476 | 0.9867 | 253.3 | 27.5 | 141.4 |
-| RISE | 9.4917 | 4 | 0.6825 | 0.6238 | 0.8277 | 0.9219 | 176.5 | 33.4 | 161.6 |
-
-Ranks are computed within each dataset, with average ranks for ties, then averaged across datasets. Wins include ties. Rank order alone does not establish statistical significance.
-
-MR-Hydra AUROC and log loss are not directly comparable with probability-producing methods: the manuscript describes hard 0/1 outputs.
-
-GPU fit/prediction times for LITETime-MV and PatchMTSC are omitted from this CPU comparison.
-
-Time is displayed in seconds (source / 1,000), memory in MiB (source / 1,048,576). Source units are inferred from tsml-eval conventions and manuscript scale, since mean CSVs have no unit metadata.
-
-### Extrinsic regression
-
-58 datasets; 8 estimators. 30 resamples, according to the manuscript. Scores come from the deposited per-dataset means; the underlying resamples/origins are not included.
-
-| Estimator | Mean rank | Wins (including ties) | RMSE | MAE | R-squared | Fit (s) | Predict (s) | Memory (MiB) |
+| Estimator | Accuracy | Balanced accuracy | AUROC | Log loss | Mean rank | Fit (s) | Predict (s) | Memory (MB) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| QUANT | 2.6724 | 17 | 692.6180 | 322.5867 | 0.3811 | 164.9 | 1.5 | 220.4 |
-| DrCIF | 3.3966 | 7 | 717.2552 | 375.6932 | 0.3993 | 2297.2 | 280.0 | 285.9 |
-| CIF | 3.9138 | 9 | 725.1109 | 384.3833 | 0.3616 | 1473.4 | 271.9 | 312.9 |
-| PULSAR | 4.4310 | 18 | 1666.0976 | 523.8747 | -30365000518.3865 | 338.0 | 34.9 | 3190.0 |
-| TSF | 4.4483 | 2 | 739.4347 | 383.2141 | 0.2507 | 416.1 | 9.1 | 140.7 |
-| SummaryIntervals | 4.9310 | 1 | 764.0488 | 356.4460 | 0.1742 | 1644.3 | 3.0 | 245.8 |
-| RandomIntervals | 5.9138 | 0 | 764.4000 | 355.9189 | 0.1641 | 662.6 | 0.9 | 144.5 |
-| RISE | 6.2931 | 4 | 751.0875 | 413.8285 | 0.2628 | 538.1 | 10.2 | 143.8 |
+| HC2 | 0.891 | 0.870 | 0.968 | 0.365 | 2.94 | 1236.0 | 965.8 | 751 |
+| MR-Hydra | 0.884 | 0.866 | 0.913* | 4.182* | 3.34 | 17.4 | 26.1 | 808 |
+| PULSAR | 0.880 | 0.859 | 0.964 | 0.523 | 3.49 | 33.8 | 36.4 | 375 |
+| QUANT | 0.867 | 0.845 | 0.962 | 0.496 | 4.50 | 3.9 | 0.6 | 22 |
+| DrCIF | 0.863 | 0.840 | 0.961 | 0.511 | 5.04 | 133.0 | 198.0 | 82 |
+| r-STSF | 0.860 | 0.837 | 0.960 | 0.515 | 5.21 | 10.4 | 3.6 | 110 |
+| CIF | 0.854 | 0.832 | 0.956 | 0.528 | 6.03 | 107.5 | 193.9 | 88 |
+| STSF | 0.841 | 0.820 | 0.954 | 0.550 | 7.32 | 58.6 | 7.0 | 60 |
+| RISE | 0.802 | 0.773 | 0.936 | 0.785 | 8.56 | 33.2 | 12.8 | 54 |
+| TSF | 0.808 | 0.786 | 0.931 | 0.636 | 8.56 | 17.3 | 3.2 | 45 |
 
-Ranks are computed within each dataset, with average ranks for ties, then averaged across datasets. Wins include ties. Rank order alone does not establish statistical significance.
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
 
-Raw errors have different target scales. PULSAR's extreme errors on a few datasets dominate its mean RMSE and R-squared.
+\* The manuscript reports hard 0/1 MR-Hydra outputs; its AUROC and log loss are not directly comparable with probability-producing methods.
 
-Time is displayed in seconds (source / 1,000), memory in MiB (source / 1,048,576). Source units are inferred from tsml-eval conventions and manuscript scale, since mean CSVs have no unit metadata.
+[Results archive](results/README.md) | [Reproduction](docs/reproducing.md)
 
-### Forecasting-based regression
+# Multivariate classification
 
-100 datasets; 12 estimators. 30 rolling origins, according to the manuscript. Scores come from the deposited per-dataset means; the underlying resamples/origins are not included.
+60 common completed Multiverse-core datasets; original partition only.
 
-| Estimator | MSE rank | Wins (including ties) | MAE rank | RMSE rank |
+Manuscript summary transcribed from table `multivariate` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Estimator | Accuracy | Balanced accuracy | AUROC | Log loss | Mean rank | Fit (s) | Predict (s) | Memory (MB) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| HC2 | 0.783 | 0.742 | 0.883 | 0.545 | 4.55 | 29474.3 | 4890.2 | 6597 |
+| MR-Hydra | 0.775 | 0.745 | 0.798* | 8.116* | 5.14 | 191.2 | 45.8 | 6415 |
+| PULSAR | 0.772 | 0.738 | 0.858 | 0.613 | 5.51 | 358.8 | 55.3 | 1672 |
+| r-STSF | 0.767 | 0.733 | 0.861 | 0.631 | 6.05 | 1856.2 | 31.0 | 7803 |
+| DrCIF | 0.765 | 0.732 | 0.866 | 0.648 | 6.16 | 1854.6 | 894.0 | 350 |
+| CIF | 0.767 | 0.734 | 0.873 | 0.650 | 6.17 | 2132.1 | 1153.5 | 280 |
+| QUANT | 0.757 | 0.727 | 0.859 | 0.737 | 6.33 | 215.8 | 6.4 | 614 |
+| STSF | 0.765 | 0.739 | 0.862 | 0.680 | 6.51 | 9124.8 | 76.4 | 596 |
+| LITETime-MV | 0.736 | 0.713 | 0.837 | 1.344 | 6.60 | --** | --** | 1465 |
+| PatchMTSC | 0.730 | 0.675 | 0.809 | 0.796 | 7.49 | --** | --** | 1089 |
+| TSF | 0.735 | 0.704 | 0.848 | 0.987 | 7.99 | 253.3 | 27.5 | 141 |
+| RISE | 0.683 | 0.624 | 0.828 | 0.922 | 9.49 | 176.5 | 33.4 | 162 |
+
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
+
+\* The manuscript reports hard 0/1 MR-Hydra outputs; its AUROC and log loss are not directly comparable with probability-producing methods.
+
+\*\* GPU timings are omitted in the manuscript because they are not comparable with CPU timings.
+
+[Results archive](results/README.md) | [Reproduction](docs/reproducing.md)
+
+# Extrinsic regression
+
+58 TSER datasets; 30 resamples. Ordered by mean RMSE rank. Raw errors have different scales across datasets.
+
+Manuscript summary transcribed from table `tser` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Estimator | RMSE | MAE | R-squared | Mean rank | Fit (s) | Predict (s) | Memory (MB) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| QUANT | 692.6 | 322.6 | 0.381 | 2.67 | 164.9 | 1.5 | 231 |
+| DrCIF | 717.3 | 375.7 | 0.399 | 3.40 | 2297.2 | 280.0 | 300 |
+| CIF | 725.1 | 384.4 | 0.362 | 3.91 | 1473.4 | 271.9 | 328 |
+| PULSAR | 1666.1 | 523.9 | -3.0 x 10^10 | 4.43 | 338.0 | 34.9 | 3345 |
+| TSF | 739.4 | 383.2 | 0.251 | 4.45 | 416.1 | 9.1 | 148 |
+| SummaryInt | 764.0 | 356.4 | 0.174 | 4.93 | 1644.3 | 3.0 | 258 |
+| RandInt | 764.4 | 355.9 | 0.164 | 5.91 | 662.6 | 0.9 | 151 |
+| RISE | 751.1 | 413.8 | 0.263 | 6.29 | 538.1 | 10.2 | 151 |
+
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
+
+PULSAR's extreme errors on a few datasets dominate its mean RMSE and R-squared. Its middling rank does not imply reliable regression performance.
+
+[Results archive](results/README.md) | [Reproduction](docs/reproducing.md)
+
+# Forecasting-based regression
+
+100 series; 30 rolling one-step origins. All columns are mean ranks (lower is better).
+
+Manuscript summary transcribed from table `tsfr` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Estimator | MSE rank | MAE rank | sMAPE rank |
+| --- | --- | --- | --- |
+| d-DrCIF | 4.34 | 4.01 | 4.47 |
+| d-QUANT | 4.67 | 4.36 | 4.71 |
+| SCUM | 4.67 | 4.87 | 4.62 |
+| Ridge | 5.17 | 5.43 | 5.51 |
+| AutoETS | 6.00 | 5.87 | 5.76 |
+| AutoARIMA | 6.00 | 5.90 | 5.81 |
+| QUANT | 6.22 | 6.33 | 6.29 |
+| Naive | 6.62 | 6.03 | 5.37 |
+| d-TimeCNN | 7.26 | 7.35 | 7.67 |
+| DrCIF | 7.33 | 7.84 | 7.63 |
+| N-BEATS | 8.52 | 8.60 | 8.74 |
+| TimeCNN | 11.20 | 11.42 | 11.40 |
+
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
+
+The d- prefix means prediction of the next change, added to the last observed level. No significance claim follows from the rank order alone.
+
+[Results archive](results/README.md) | [Reproduction](docs/reproducing.md)
+
+# PULSAR ablation
+
+103 UCR datasets; 30 resamples. Ordered by mean accuracy. Comparisons against QUANT use uncorrected p-values.
+
+Manuscript summary transcribed from table `pulsar_ablation` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Variant | Element removed | Accuracy | Delta QUANT | W-L-T | p (uncorrected) |
+| --- | --- | --- | --- | --- | --- |
+| PULSAR | -- | 0.8769 | +0.0129 | 78--21--4 | 3 x 10^-8 |
+| no-AR | autoregressive repr. | 0.8748 | +0.0108 | 75--24--4 | 5 x 10^-8 |
+| no-selection | Fisher-score selection | 0.8723 | +0.0083 | 73--26--4 | 6 x 10^-6 |
+| no-pooling | hierarchical pooling | 0.8689 | +0.0049 | 60--39--4 | 0.043 |
+| extratrees-head | the ridge head | 0.8685 | +0.0045 | 56--40--7 | 0.083 |
+| QUANT | -- | 0.8640 | -- | -- | -- |
+| ridge-head | the extra-trees head | 0.8604 | -0.0036 | 45--55--3 | 0.57 |
+| DrCIF | -- | 0.8595 | -- | -- | -- |
+
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
+
+[Results archive](results/README.md) | [Reproduction](docs/reproducing.md)
+
+# Alignment simulation
+
+30 independent paired replicates per condition. Accuracy is reported separately for each strength and placement; Global is a non-localising whole-series reference, not a competitor.
+
+Manuscript summary transcribed from table `sim_alignment` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Strength | Placement | QUANT | TSF | r-STSF | PULSAR | ROCKET | Global |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.75 | aligned | 0.847 | 0.863 | 0.873 | 0.859 | 0.685 | 0.666 |
+|  | J=L/4 | 0.833 | 0.855 | 0.859 | 0.847 | 0.674 | 0.665 |
+|  | J=L | 0.776 | 0.813 | 0.806 | 0.798 | 0.663 | 0.667 |
+|  | uniform | 0.687 | 0.728 | 0.687 | 0.705 | 0.628 | 0.662 |
+| 1.00 | aligned | 0.945 | 0.960 | 0.960 | 0.956 | 0.844 | 0.792 |
+|  | J=L/4 | 0.945 | 0.955 | 0.958 | 0.952 | 0.837 | 0.793 |
+|  | J=L | 0.893 | 0.928 | 0.923 | 0.926 | 0.834 | 0.793 |
+|  | uniform | 0.818 | 0.875 | 0.840 | 0.869 | 0.802 | 0.792 |
+
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
+
+[Results archive](../../results/README.md) | [Reproduction](../reproducing.md)
+
+# Simulation ablation
+
+Strength 1; 30 paired replicates. Accuracy and loss of accuracy on displacement; standard errors in parentheses. The paper reports conditions rather than an overall league ranking.
+
+Manuscript summary transcribed from table `sim_ablation` on 2026-09-09. This reference copy is separate from the result-derived tables.
+
+| Variant | Element removed | Aligned | Uniform | Loss |
 | --- | --- | --- | --- | --- |
-| d-DrCIF | 4.3450 | 10 | 4.0150 | 4.3450 |
-| SCUM | 4.6700 | 13 | 4.8700 | 4.6700 |
-| d-QUANT | 4.6750 | 12 | 4.3550 | 4.6750 |
-| Ridge | 5.1700 | 25 | 5.4300 | 5.1700 |
-| AutoETS | 5.9950 | 6 | 5.8650 | 5.9950 |
-| AutoARIMA | 6.0000 | 7 | 5.9000 | 6.0000 |
-| QUANT | 6.2250 | 12 | 6.3250 | 6.2250 |
-| Naive | 6.6150 | 7 | 6.0250 | 6.6150 |
-| d-TimeCNN | 7.2600 | 1 | 7.3500 | 7.2600 |
-| DrCIF | 7.3250 | 8 | 7.8450 | 7.3250 |
-| NBeats | 8.5200 | 4 | 8.6000 | 8.5200 |
-| TimeCNN | 11.2000 | 0 | 11.4200 | 11.2000 |
+| PULSAR | -- | 0.957 (0.002) | 0.869 (0.004) | 0.088 (0.004) |
+| no-pooling | hierarchical pooling | 0.910 (0.003) | 0.878 (0.003) | 0.032 (0.004) |
+| no-selection | Fisher-score selection | 0.956 (0.002) | 0.870 (0.004) | 0.086 (0.004) |
+| no-AR | autoregressive repr. | 0.957 (0.002) | 0.870 (0.004) | 0.088 (0.004) |
+| extratrees-head | the ridge head | 0.957 (0.002) | 0.876 (0.003) | 0.081 (0.004) |
+| ridge-head | the extra-trees head | 0.942 (0.003) | 0.835 (0.004) | 0.107 (0.005) |
+| TSF | -- | 0.961 (0.002) | 0.875 (0.003) | 0.086 (0.004) |
+| ROCKET | -- | 0.851 (0.004) | 0.802 (0.003) | 0.050 (0.005) |
 
-Ranks are computed within each dataset, with average ranks for ties, then averaged across datasets. Wins include ties. Rank order alone does not establish statistical significance.
+Lower mean rank and error are better; higher accuracy, AUROC and R-squared are better.
 
-sMAPE is absent from the deposited files and cannot be reconstructed from MAPE or aggregate errors. RMSE ranks are shown instead; no sMAPE values are inferred. Forecast timing/memory columns contain many zeros and are not presented as a cost comparison.
+[Results archive](../../results/README.md) | [Reproduction](../reproducing.md)
 
 ## Install and use
 

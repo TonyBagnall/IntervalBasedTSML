@@ -1,5 +1,5 @@
 {
-  "source": "deposited per-dataset mean CSVs",
+  "source": "deposited per-dataset mean CSVs and manuscript summary CSVs",
   "studies": {
     "UCR": {
       "datasets": [
@@ -550,7 +550,7 @@
         "AutoARIMA",
         "AutoETS",
         "DrCIF",
-        "NBeats",
+        "N-BEATS",
         "Naive",
         "QUANT",
         "Ridge",
@@ -612,5 +612,34 @@
   },
   "historical_run_commits": null,
   "protocol_evidence": "Resample/origin counts come from the manuscript; mean CSVs cannot verify them.",
-  "unit_interpretation": "Timing milliseconds and memory bytes, inferred from tsml-eval conventions and manuscript scale; original headers are absent."
+  "unit_interpretation": "Timing milliseconds and memory bytes, displayed as seconds and MB to match the submitted manuscript.",
+  "simulation": {
+    "source": "submitted manuscript summary values; raw simulation outputs unavailable",
+    "files": {
+      "manuscript_alignment.csv": {
+        "sha256": "3998123b9595bfdf84df78b0449066eeca3a1efa8cdcea3d8a00ab50ffb2639a"
+      },
+      "manuscript_pulsar_ablation.csv": {
+        "sha256": "5342ef06eb85c7c37084b14ad37218788cabb962034be869ff4cdb49c72e8077"
+      }
+    },
+    "design": {
+      "series_length": 512,
+      "interval_length": 64,
+      "strengths": [
+        0.75,
+        1.0
+      ],
+      "placements": [
+        "aligned",
+        "jitter up to L/4",
+        "jitter up to L",
+        "uniform"
+      ],
+      "train_cases": 200,
+      "test_cases": 500,
+      "balanced_classes": true,
+      "independent_replicates": 30
+    }
+  }
 }
