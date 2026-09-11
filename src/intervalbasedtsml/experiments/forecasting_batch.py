@@ -97,6 +97,56 @@ def rolling_predictions(series, differenced, regressor, *, window=100, origins=3
     return rows
 
 
+def windowed_problems(values, *, window=100, differenced=False):
+    """Return the windowed design a regressor is fitted on, as one matrix.
+
+    This is exactly what aeon's ``RegressionForecaster`` builds internally: every
+    length-``window`` sliding window of the (optionally first-differenced) series
+    is a row of lag features, paired with the next value as the target. Row order
+    matches time, so the 30 rolling one-step problems are the rows whose
+    ``target_index`` falls in the final 30 positions of the original series;
+    problem ``i`` is fitted on the rows before it.
+
+    Columns are ``target_index`` (the index in the ORIGINAL series of the value
+    forecast by that row), then ``window`` lag features (oldest ``t-window`` to
+    newest ``t-1``), then ``target``. For ``differenced=True`` the lags and target
+    are first differences; the level forecast for a row is ``target`` plus the
+    original value at ``target_index - 1``.
+    """
+    values = np.asarray(values, dtype=float)
+    base = np.diff(values) if differenced else values
+    if base.ndim != 1 or base.shape[0] - window < 1:
+        raise ValueError("series is too short for this window")
+    windows = np.lib.stride_tricks.sliding_window_view(base, window)
+    features = windows[:-1]
+    target = base[window:]
+    # Row j forecasts base[window + j]; differencing shifts the level it restores.
+    target_index = np.arange(window, window + target.shape[0]) + int(differenced)
+    return np.column_stack([target_index, features, target])
+
+
+def write_problem_files(series, output_dir, *, window=100):
+    """Write level and differenced windowed-problem CSVs for every series.
+
+    One file per (series, variant) under ``<output_dir>/level`` and
+    ``<output_dir>/differenced``, named ``<series>.csv`` with a header row.
+    """
+    output_dir = Path(output_dir)
+    header = ["target_index", *(f"t-{lag}" for lag in range(window, 0, -1)), "target"]
+    number_format = ["%d"] + ["%.12g"] * (window + 1)
+    written = 0
+    for variant, differenced in (("level", False), ("differenced", True)):
+        variant_dir = output_dir / variant
+        variant_dir.mkdir(parents=True, exist_ok=True)
+        for name, values in series:
+            matrix = windowed_problems(values, window=window, differenced=differenced)
+            with (variant_dir / f"{name}.csv").open("w", newline="", encoding="utf-8") as stream:
+                stream.write(",".join(header) + "\n")
+                np.savetxt(stream, matrix, fmt=number_format, delimiter=",")
+            written += 1
+    return written
+
+
 def metrics(rows):
     """Return (MSE, MAE, sMAPE) over one series' rolling predictions."""
     actual = np.array([r[1] for r in rows], dtype=float)
@@ -155,8 +205,14 @@ def main(argv=None):
     repo_root = Path(__file__).resolve().parents[3]
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--estimators", nargs="+", required=True,
+    default_problems_dir = repo_root / "configs" / "datasets" / "tsfr_problems"
+    parser.add_argument("--estimators", nargs="+", default=None,
                         help="e.g. quant d-quant drcif d-drcif ridge naive")
+    parser.add_argument("--dump-problems", nargs="?", type=Path, const=default_problems_dir,
+                        default=None, metavar="DIR",
+                        help="Write level and differenced windowed-problem CSVs for every "
+                             f"series (default DIR: {default_problems_dir}) and, unless "
+                             "estimators are also given, exit without forecasting.")
     parser.add_argument("--series-file", type=Path,
                         default=repo_root / "configs" / "datasets" / "tsfr100_series.csv")
     parser.add_argument("--output", type=Path, default=repo_root / "local" / "forecasts_batch")
@@ -172,9 +228,23 @@ def main(argv=None):
                         help="Print the planned runs and exit without forecasting.")
     args = parser.parse_args(argv)
 
+    if args.estimators is None and args.dump_problems is None:
+        parser.error("Give --estimators to forecast, --dump-problems to emit problems, or both.")
+
     series = list(read_series_file(args.series_file, args.datasets))
     if not series:
         parser.error("No matching series found in the series file.")
+
+    if args.dump_problems is not None:
+        if args.dry_run:
+            print(f"Would write level + differenced problems for {len(series)} series "
+                  f"(window={args.window}) to {args.dump_problems}")
+        else:
+            written = write_problem_files(series, args.dump_problems, window=args.window)
+            print(f"Wrote {written} windowed-problem files under {args.dump_problems}")
+        if args.estimators is None:
+            return
+
     if args.dry_run:
         print(f"{len(args.estimators)} estimators x {len(series)} series, "
               f"origins={args.origins}, window={args.window}")

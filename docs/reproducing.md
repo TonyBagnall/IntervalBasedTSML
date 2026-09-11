@@ -82,14 +82,14 @@ multivariate LITETime-MV and PatchMTSC reference configurations.
 
 ### Batch runner over all series
 
-`configs/datasets/tsfr100_series.csv` holds the actual values of each series, one
-per line, prefixed by the series name (`<name>,v0,v1,...`). The final 30 values
-of a line are the rolling one-step origins; everything before them is history.
-Rebuild it from prepared `<name>_TRAIN.csv`/`_TEST.csv` problems with
-`python tools/build_tsfr100_series.py --data-root <path>` (the values are the
-concatenated train then test observations). `wind_farms_minutely_dataset_without_missing_values_T6`
-currently has no prepared problem, so the file holds 99 of the 100 IDs until it
-is supplied.
+`configs/datasets/tsfr100_series.csv` holds the actual values of each of the 100
+series, one per line, prefixed by the series name (`<name>,v0,v1,...`). The
+values are the concatenated train then test observations (each series truncated
+to at most 10000 points, as in tsml-eval's split); the final 30 values of a line
+are the rolling one-step origins and everything before them is history.
+`wind_farms_minutely_dataset_without_missing_values_T6` is the `T6` series of the
+Monash `.tsf` that tsml-eval downloads, which has no separately deposited
+train/test problem.
 
 `interval-forecast-batch` runs the reduction forecasters over that file. Unlike
 the per-series `interval-forecast` above (a manual 99-predictor window), it uses
@@ -108,6 +108,17 @@ It writes a per-series `origin,actual,predicted` file and manifest under
 `local/forecasts_batch/<method>/`, a per-series `summary_metrics.csv`, and a
 `summary_ranks.csv` of mean MSE/MAE/sMAPE ranks in the same shape as
 `results/TSFR/manuscript_summary_ranks.csv`.
+
+`--dump-problems [DIR]` additionally writes, for every series, the exact windowed
+design a regressor is fitted on -- one CSV per series under `DIR/level/` and
+`DIR/differenced/` (default `DIR` is `configs/datasets/tsfr_problems`). Each row
+is `target_index` (the index in the original series of the value it forecasts),
+`window` lag features (oldest `t-100` to newest `t-1`), then `target`; the 30
+rolling problems are the rows whose `target_index` is among the final 30
+positions. For the differenced files the lags and target are first differences,
+and the level forecast is `target` plus the original value at `target_index - 1`.
+Given only `--dump-problems` (no `--estimators`) the command emits the files and
+exits without forecasting.
 
 ## Rebuild league tables
 

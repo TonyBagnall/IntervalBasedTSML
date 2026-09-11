@@ -11,6 +11,7 @@ from intervalbasedtsml.experiments.forecasting_batch import (
     metrics,
     read_series_file,
     rolling_predictions,
+    windowed_problems,
 )
 
 
@@ -60,6 +61,27 @@ def test_make_regressor_resolves_differencing_and_special_names():
     differenced, regressor = make_regressor("d-ridge")
     assert differenced and regressor is not None
     assert make_regressor("quant")[1].__class__.__name__ == "QUANTRegressor"
+
+
+def test_windowed_problems_level_rows_are_lag_windows_and_targets():
+    values = np.arange(20.0)
+    matrix = windowed_problems(values, window=4)
+    assert matrix.shape == (len(values) - 4, 1 + 4 + 1)  # target_index, 4 lags, target
+    # Row 0 forecasts values[4] from values[0:4]; last row forecasts values[-1].
+    np.testing.assert_array_equal(matrix[0], [4, 0, 1, 2, 3, 4])
+    np.testing.assert_array_equal(matrix[:, 0], np.arange(4, len(values)))
+    assert matrix[-1, 0] == len(values) - 1
+
+
+def test_windowed_problems_differenced_restores_levels():
+    values = np.array([2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0, 55.0])
+    matrix = windowed_problems(values, window=3, differenced=True)
+    # target_index is the ORIGINAL-series index; last row still forecasts values[-1].
+    assert matrix[-1, 0] == len(values) - 1
+    for row in matrix:
+        target_index = int(row[0])
+        # difference target plus the preceding level reconstructs the actual value.
+        assert row[-1] + values[target_index - 1] == pytest.approx(values[target_index])
 
 
 def test_regression_forecaster_path_does_not_see_the_future():
