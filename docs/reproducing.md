@@ -80,6 +80,35 @@ recovered. Their deposited mean results are displayed, but a new implementation 
 guessed defaults is not labelled as their reproduction. The same applies to the
 multivariate LITETime-MV and PatchMTSC reference configurations.
 
+### Batch runner over all series
+
+`configs/datasets/tsfr100_series.csv` holds the actual values of each series, one
+per line, prefixed by the series name (`<name>,v0,v1,...`). The final 30 values
+of a line are the rolling one-step origins; everything before them is history.
+Rebuild it from prepared `<name>_TRAIN.csv`/`_TEST.csv` problems with
+`python tools/build_tsfr100_series.py --data-root <path>` (the values are the
+concatenated train then test observations). `wind_farms_minutely_dataset_without_missing_values_T6`
+currently has no prepared problem, so the file holds 99 of the 100 IDs until it
+is supplied.
+
+`interval-forecast-batch` runs the reduction forecasters over that file. Unlike
+the per-series `interval-forecast` above (a manual 99-predictor window), it uses
+aeon's `RegressionForecaster` with the paper's `window=100`, matching the
+tsml-eval pipeline, and its differenced variants match `DifferencedForecaster`
+(order 1). Estimators are whatever you name; any registry regression name is
+accepted, with an optional `d-` prefix, plus `ridge` and `naive`.
+
+```bash
+interval-forecast-batch --estimators quant d-quant drcif d-drcif ridge naive --dry-run
+interval-forecast-batch --estimators d-drcif ridge naive --datasets m4_daily_dataset_T1
+interval-forecast-batch --estimators quant d-quant drcif d-drcif ridge naive
+```
+
+It writes a per-series `origin,actual,predicted` file and manifest under
+`local/forecasts_batch/<method>/`, a per-series `summary_metrics.csv`, and a
+`summary_ranks.csv` of mean MSE/MAE/sMAPE ranks in the same shape as
+`results/TSFR/manuscript_summary_ranks.csv`.
+
 ## Rebuild league tables
 
 Collate predictions with the included command, which uses tsml-eval's verified
