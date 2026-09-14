@@ -80,6 +80,46 @@ recovered. Their deposited mean results are displayed, but a new implementation 
 guessed defaults is not labelled as their reproduction. The same applies to the
 multivariate LITETime-MV and PatchMTSC reference configurations.
 
+### Batch runner over all series
+
+`configs/datasets/tsfr100_series.csv` holds the actual values of each of the 100
+series, one per line, prefixed by the series name (`<name>,v0,v1,...`). The
+values are the concatenated train then test observations (each series truncated
+to at most 10000 points, as in tsml-eval's split); the final 30 values of a line
+are the rolling one-step origins and everything before them is history.
+`wind_farms_minutely_dataset_without_missing_values_T6` is the `T6` series of the
+Monash `.tsf` that tsml-eval downloads, which has no separately deposited
+train/test problem.
+
+`interval-forecast-batch` runs the reduction forecasters over that file. Unlike
+the per-series `interval-forecast` above (a manual 99-predictor window), it uses
+aeon's `RegressionForecaster` with the paper's `window=100`, matching the
+tsml-eval pipeline, and its differenced variants match `DifferencedForecaster`
+(order 1). Estimators are whatever you name; any registry regression name is
+accepted, with an optional `d-` prefix, plus `ridge` and `naive`.
+
+```bash
+interval-forecast-batch --estimators quant d-quant drcif d-drcif ridge naive --dry-run
+interval-forecast-batch --estimators d-drcif ridge naive --datasets m4_daily_dataset_T1
+interval-forecast-batch --estimators quant d-quant drcif d-drcif ridge naive
+```
+
+It writes a per-series `origin,actual,predicted` file and manifest under
+`local/forecasts_batch/<method>/`, a per-series `summary_metrics.csv`, and a
+`summary_ranks.csv` of mean MSE/MAE/sMAPE ranks in the same shape as
+`results/TSFR/manuscript_summary_ranks.csv`.
+
+`--dump-problems [DIR]` additionally writes, for every series, the exact windowed
+design a regressor is fitted on -- one CSV per series under `DIR/level/` and
+`DIR/differenced/` (default `DIR` is `configs/datasets/tsfr_problems`). Each row
+is `target_index` (the index in the original series of the value it forecasts),
+`window` lag features (oldest `t-100` to newest `t-1`), then `target`; the 30
+rolling problems are the rows whose `target_index` is among the final 30
+positions. For the differenced files the lags and target are first differences,
+and the level forecast is `target` plus the original value at `target_index - 1`.
+Given only `--dump-problems` (no `--estimators`) the command emits the files and
+exits without forecasting.
+
 ## Rebuild league tables
 
 Collate predictions with the included command, which uses tsml-eval's verified

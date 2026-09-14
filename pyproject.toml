@@ -34,6 +34,7 @@ interval-benchmark = "intervalbasedtsml.experiments.benchmark:main"
 interval-league = "intervalbasedtsml.results:main"
 interval-simulate = "intervalbasedtsml.experiments.simulation:main"
 interval-forecast = "intervalbasedtsml.experiments.forecasting:main"
+interval-forecast-batch = "intervalbasedtsml.experiments.forecasting_batch:main"
 interval-collate = "intervalbasedtsml.experiments.collate:main"
 
 [project.urls]
